@@ -1,0 +1,13 @@
+services:
+  frontend:
+    image: oven/bun:latest
+    restart: always
+  # vision:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - .:/app
+  #   command: bash -c "clear && lolcat --force logo.txt | fastfetch --logo  -  --logo-padding-left 0"
