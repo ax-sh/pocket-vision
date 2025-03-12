@@ -1,13 +1,82 @@
 services:
-  frontend:
+  fe:
     image: oven/bun:latest
+    container_name: bun-vite-react-frontend
     restart: always
-  # vision:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - .:/app
-  #   command: bash -c "clear && lolcat --force logo.txt | fastfetch --logo  -  --logo-padding-left 0"
+    working_dir: /app
+    ports:
+      - '5173:5173' # Vite default port
+    volumes:
+      - ./:/app:cached # Sync project files with better performance
+      - /app/node_modules # Isolated node_modules volume
+    environment:
+      - NODE_ENV=development
+      # Important: Tell Vite to listen on all interfaces
+      - VITE_HOST=0.0.0.0
+    # Use entrypoint script for initialization
+    command: sh -c "bun install && bun run dev --host 0.0.0.0"
+    depends_on:
+      - pocketbase
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:latest
+    container_name: pocketbase
+    restart: unless-stopped
+    environment:
+      ENCRYPTION: example #optional
+    ports:
+      - '8090:8090'
+    volumes:
+      - pb_data:/pb/pb_data
+    healthcheck:
+      #optional (recommended) since v0.10.0
+      test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pb_data:
+#  fe:
+#    image: oven/bun:latest
+#    container_name: bun-vite-react-frontend
+#    restart: always
+#    working_dir: /app
+#    ports:
+#      - "3000:3000" # Vite dev server
+#      - "5173:5173" # Vite HMR
+#    volumes:
+#      - .:/app # Sync project files
+#      - /app/node_modules # Isolate node_modules
+#    environment:
+#      - NODE_ENV=development
+#    command: bun i && bun run dev
+#    x-develop:
+#      watch:
+#        - action: rebuild
+#          path: ./
+#          target: /usr/src/app/
+#          ignore:
+#            - node_modules/
+#        - action: rebuild
+#          path: package.json
+#    command: >
+#      sh -c "
+#        bun  i vite &&
+#        apt-get update && apt-get install -y inotify-tools &&
+#        bun install &&
+#        bun run dev &
+#        inotifywait -m -e close_write package.json package-lock.json |
+#        while read path events filename; do
+#          echo 'Changes detected in $filename. Updating dependencies...';
+#          bun install;
+#        done
+#      "
+# vision:
+#   build:
+#     context: .
+#     dockerfile: Dockerfile
+#   ports:
+#     - "8080:8080"
+#   volumes:
+#     - .:/app
+#   command: bash -c "clear && lolcat --force logo.txt | fastfetch --logo  -  --logo-padding-left 0"
