@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "up": "docker-compose up",
+    "up": "docker-compose up -d",
+    "down": "docker-compose down -v",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
