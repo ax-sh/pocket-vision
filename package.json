@@ -12,16 +12,20 @@
     "preview": "vite preview",
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
-    "pretty": "pretty-quick"
+    "pretty": "pretty-quick",
+    "format": "nlx @biomejs/biome format --write ./src"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.67.3",
     "pocketbase": "^0.25.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "swapy": "^1.0.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@eslint/js": "^9.21.0",
+    "@tanstack/eslint-plugin-query": "^5.67.2",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",

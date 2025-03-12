@@ -1,15 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 import './App.css';
 import reactLogo from './assets/react.svg';
-import { getUsers } from './db.ts';
 import viteLogo from '/vite.svg';
+import { getUsers } from './db/db-query.ts';
+
+function useUsersQuery() {
+  return useQuery({
+    initialData: undefined,
+    queryKey: ['users'],
+    queryFn: () => {
+      return getUsers();
+    },
+  });
+}
 
 function App() {
   const [count, setCount] = useState(0);
-  useEffect(() => {
-    getUsers();
-  }, []);
+  const { data } = useUsersQuery();
+  console.log(data);
 
   return (
     <>

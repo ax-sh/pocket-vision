@@ -3,7 +3,7 @@ services:
     image: oven/bun:latest
     container_name: bun-vite-react-frontend
     restart: always
-    working_dir: /app
+    working_dir: /app # workdir
     ports:
       - '5173:5173' # Vite default port
     volumes:
@@ -12,21 +12,35 @@ services:
     environment:
       - NODE_ENV=development
       # Important: Tell Vite to listen on all interfaces
-      - VITE_HOST=0.0.0.0
+    #      - VITE_HOST=0.0.0.0
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app # workdir
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
     # Use entrypoint script for initialization
     command: sh -c "bun install && bun run dev --host 0.0.0.0"
     depends_on:
       - pocketbase
   pocketbase:
-    image: ghcr.io/muchobien/pocketbase:latest
+    env_file:
+      - .env
+    image: ghcr.io/muchobien/pocketbase:0.25.9
     container_name: pocketbase
     restart: unless-stopped
+    entrypoint: sh -c '/usr/local/bin/pocketbase superuser create $PB_SUPERUSER_EMAIL $PB_SUPERUSER_PASSWORD --dev --dir=/pb/pb_data && /usr/local/bin/pocketbase serve --dev --http=0.0.0.0:8090 --dir=/pb/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks --migrationsDir=/pb/pb_migrations'
     environment:
       ENCRYPTION: example #optional
+      PB_SUPERUSER_EMAIL: ${PB_SUPERUSER_EMAIL}
+      PB_SUPERUSER_PASSWORD: ${PB_SUPERUSER_PASSWORD}
     ports:
       - '8090:8090'
     volumes:
-      - pb_data:/pb/pb_data
+      - ./pb:/pb
     healthcheck:
       #optional (recommended) since v0.10.0
       test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
