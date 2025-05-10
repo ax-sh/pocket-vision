@@ -29,7 +29,7 @@ services:
   pocketbase:
     env_file:
       - .env
-    image: ghcr.io/muchobien/pocketbase:0.25.9
+    image: ghcr.io/muchobien/pocketbase:0.27.1
     container_name: pocketbase
     restart: unless-stopped
     entrypoint: sh -c '/usr/local/bin/pocketbase superuser create $PB_SUPERUSER_EMAIL $PB_SUPERUSER_PASSWORD --dev --dir=/pb/pb_data && /usr/local/bin/pocketbase serve --dev --http=0.0.0.0:8090 --dir=/pb/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks --migrationsDir=/pb/pb_migrations'
