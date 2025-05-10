@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.67.3",
-    "pocketbase": "^0.25.2",
+    "pocketbase": "^0.26.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "swapy": "^1.0.5"
